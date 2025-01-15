@@ -1,10 +1,10 @@
 # 앱 진입점 (FastAPI 인스턴스 실행)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import item
+from app.api import item, weather
 
 # FastAPI 앱 초기화
-app = FastAPI()
+app = FastAPI(debug=True)
 
 # CORS 설정 추가
 origins = ["*"]  # 모든 도메인 허용
@@ -19,3 +19,4 @@ app.add_middleware(
 
 # 라우터 등록
 app.include_router(item.router, prefix="/items", tags=["Items"])
+app.include_router(weather.router, prefix="/climate", tags=["Climate"])
