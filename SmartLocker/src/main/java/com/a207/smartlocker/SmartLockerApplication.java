@@ -1,4 +1,4 @@
-package A207.SmartLocker;
+package com.a207.smartlocker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
