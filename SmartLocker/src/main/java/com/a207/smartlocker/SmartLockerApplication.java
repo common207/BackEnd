@@ -8,5 +8,8 @@ public class SmartLockerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SmartLockerApplication.class, args);
+
+		System.out.println("sdsds");
 	}
+
 }
