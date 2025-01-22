@@ -1,9 +1,6 @@
 package com.a207.smartlocker.model.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 import jakarta.persistence.*;
 
 // entity/User.java
@@ -12,6 +9,7 @@ import jakarta.persistence.*;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
