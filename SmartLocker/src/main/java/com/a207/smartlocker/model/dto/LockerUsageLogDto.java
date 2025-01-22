@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LockerUsageLogDto {
-    private int logId;                // Primary Key (Non-nullable)
-    private int lockerId;             // Foreign Key (Non-nullable)
-    private int userId;               // Foreign Key (Non-nullable)
+    private Long logId;                // Primary Key (Non-nullable)
+    private Long lockerId;             // Foreign Key (Non-nullable)
+    private Long userId;               // Foreign Key (Non-nullable)
     private LocalDateTime storeTime;  // Non-nullable
-    private int storeRobotId;         // Foreign Key (Non-nullable)
+    private Long storeRobotId;         // Foreign Key (Non-nullable)
     private LocalDateTime retrieveTime; // Nullable
-    private Integer retrieveRobotId;  // Foreign Key (Nullable)
+    private Long retrieveRobotId;  // Foreign Key (Nullable)
 }

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class LockerUsageLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int logId; // Matches DB SERIAL as INTEGER
+    private Long logId; // Matches DB SERIAL as LongEGER
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "locker_id", nullable = false)

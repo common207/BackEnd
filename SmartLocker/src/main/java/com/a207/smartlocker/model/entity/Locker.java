@@ -15,7 +15,7 @@ import jakarta.persistence.*;
 public class Locker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int lockerId; // Matches DB SERIAL as INTEGER
+    private Long lockerId; // Matches DB SERIAL as LongEGER
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "locker_status_id", nullable = false)

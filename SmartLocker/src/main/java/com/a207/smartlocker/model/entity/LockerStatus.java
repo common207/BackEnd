@@ -15,7 +15,7 @@ import jakarta.persistence.*;
 public class LockerStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int lockerStatusId; // Matches DB SERIAL as INTEGER
+    private Long lockerStatusId; // Matches DB SERIAL as LongEGER
 
     @Column(nullable = false)
     private String lockerStatus; // Non-nullable TEXT

@@ -15,14 +15,14 @@ import jakarta.persistence.*;
 public class LockerLocation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int locationId; // Matches DB SERIAL as INTEGER
+    private Long locationId; // Matches DB SERIAL as LongEGER
 
     @Column(nullable = false)
     private String locationName; // Non-nullable
 
     @Column(nullable = false)
-    private int totalLockers; // Non-nullable INTEGER
+    private Long totalLockers; // Non-nullable LongEGER
 
     @Column(nullable = false)
-    private int availableLockers; // Non-nullable INTEGER
+    private Long availableLockers; // Non-nullable LongEGER
 }
