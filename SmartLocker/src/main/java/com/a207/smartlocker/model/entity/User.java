@@ -15,8 +15,8 @@ import jakarta.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private int userId; // Matches DB SERIAL as INTEGER
 
     @Column(unique = true, nullable = false)
-    private String phoneNumber;
+    private String phoneNumber; // Unique and Non-nullable TEXT
 }

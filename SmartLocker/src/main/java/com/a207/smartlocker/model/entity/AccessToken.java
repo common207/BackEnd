@@ -15,8 +15,8 @@ import jakarta.persistence.*;
 public class AccessToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tokenId;
+    private int tokenId;
 
     @Column(nullable = false)
-    private Integer tokenValue;
+    private int tokenValue;
 }
