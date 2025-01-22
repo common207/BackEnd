@@ -10,8 +10,8 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LockerDto {
-    private int lockerId;           // Primary Key (Non-nullable)
-    private int lockerStatusId;     // Foreign Key (Non-nullable)
-    private int lockerLocationId;   // Foreign Key (Non-nullable)
-    private Integer tokenId;        // Foreign Key (Nullable)
+    private Long lockerId;           // Primary Key (Non-nullable)
+    private Long lockerStatusId;     // Foreign Key (Non-nullable)
+    private Long lockerLocationId;   // Foreign Key (Non-nullable)
+    private Long tokenId;        // Foreign Key (Nullable)
 }

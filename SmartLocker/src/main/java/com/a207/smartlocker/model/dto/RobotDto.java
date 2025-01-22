@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RobotDto {
-    private int robotId;              // Primary Key (Non-nullable)
+    private Long robotId;              // Primary Key (Non-nullable)
     private String robotName;         // Non-nullable
-    private int completedTasks;       // Default 0
+    private Long completedTasks;       // Default 0
     private LocalDateTime lastMaintenance; // Non-nullable
-    private int robotStatusId;        // Foreign Key (Non-nullable)
+    private Long robotStatusId;        // Foreign Key (Non-nullable)
 }

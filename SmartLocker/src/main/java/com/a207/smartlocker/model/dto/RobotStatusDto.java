@@ -10,6 +10,6 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RobotStatusDto {
-    private int robotStatusId;    // Primary Key (Non-nullable)
+    private Long robotStatusId;    // Primary Key (Non-nullable)
     private String robotStatus;   // Non-nullable
 }

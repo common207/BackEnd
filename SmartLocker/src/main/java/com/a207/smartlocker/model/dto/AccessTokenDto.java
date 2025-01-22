@@ -10,6 +10,6 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccessTokenDto {
-    private int tokenId;
-    private int tokenValue;
+    private Long tokenId;
+    private Long tokenValue;
 }
