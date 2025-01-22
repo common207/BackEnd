@@ -15,8 +15,8 @@ import jakarta.persistence.*;
 public class RobotStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long robotStatusId;
+    private int robotStatusId; // Matches DB SERIAL as INTEGER
 
     @Column(nullable = false)
-    private String robotStatus;
+    private String robotStatus; // Non-nullable TEXT
 }

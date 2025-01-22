@@ -10,8 +10,8 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LockerLocationDto {
-    private int locationId;
-    private String locationName;
-    private int totalLockers;
-    private int availableLockers;
+    private int locationId;        // Primary Key (Non-nullable)
+    private String locationName;   // Non-nullable
+    private int totalLockers;      // Non-nullable
+    private int availableLockers;  // Non-nullable
 }

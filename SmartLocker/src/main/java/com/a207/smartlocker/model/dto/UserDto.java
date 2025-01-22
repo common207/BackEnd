@@ -10,6 +10,6 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-    private int userId;
-    private String phoneNumber;
+    private int userId;          // Primary Key (Non-nullable)
+    private String phoneNumber;  // Unique, Non-nullable
 }

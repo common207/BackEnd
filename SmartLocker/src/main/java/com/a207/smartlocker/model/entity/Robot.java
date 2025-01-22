@@ -16,19 +16,19 @@ import java.time.LocalDateTime;
 public class Robot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long robotId;
+    private int robotId; // Matches DB SERIAL as INTEGER
 
     @Column(nullable = false)
-    private String robotName;
+    private String robotName; // Non-nullable TEXT
 
-    @Column(columnDefinition = "integer default 0")
-    private Integer completedTasks;
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private int completedTasks; // Default value 0, Non-nullable
 
     @Column(nullable = false)
-    private LocalDateTime lastMaintenance;
+    private LocalDateTime lastMaintenance; // Non-nullable TIMESTAMP
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "robot_status_id", nullable = false)
-    private RobotStatus robotStatus;
+    private RobotStatus robotStatus; // Non-nullable Foreign Key reference
 
 }
