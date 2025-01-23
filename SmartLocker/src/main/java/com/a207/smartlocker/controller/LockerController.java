@@ -2,7 +2,6 @@ package com.a207.smartlocker.controller;
 
 import com.a207.smartlocker.model.dto.StorageRequest;
 import com.a207.smartlocker.model.dto.StorageResponse;
-import com.a207.smartlocker.model.entity.Locker;
 import com.a207.smartlocker.service.LockerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
