@@ -71,8 +71,8 @@ public class LockerServiceImpl implements LockerService {
         usageLogRepository.save(usageLog);
 
         return StorageResponse.builder()
-                .lockerId(1234L)
-                .tokenValue(123456L)
+                .lockerId(locker.getLockerId())
+                .tokenValue(accessToken.getTokenValue())
                 .message("Storage request successful")
                 .build();
     }
