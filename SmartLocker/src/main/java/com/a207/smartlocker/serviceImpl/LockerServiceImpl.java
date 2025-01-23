@@ -3,11 +3,7 @@ package com.a207.smartlocker.serviceImpl;
 import com.a207.smartlocker.exception.NotFoundException;
 import com.a207.smartlocker.model.dto.StorageRequest;
 import com.a207.smartlocker.model.dto.StorageResponse;
-import com.a207.smartlocker.model.entity.AccessToken;
-import com.a207.smartlocker.model.entity.LockerStatus;
-import com.a207.smartlocker.model.entity.User;
-import com.a207.smartlocker.model.entity.Locker;
-import com.a207.smartlocker.model.entity.Robot;
+import com.a207.smartlocker.model.entity.*;
 import com.a207.smartlocker.repository.*;
 import com.a207.smartlocker.repository.LockerStatusRepository;
 import com.a207.smartlocker.service.LockerService;
@@ -15,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
@@ -26,6 +23,8 @@ public class LockerServiceImpl implements LockerService {
     private final LockerRepository lockerRepository;
     private final LockerStatusRepository lockerStatusRepository;
     private final RobotRepository robotRepository;
+    private final LockerUsageLogRepository usageLogRepository;
+    private final RobotStatusRepository robotStatusRepository;
 
     @Override
     public StorageResponse storeItem(StorageRequest request) {
@@ -54,10 +53,22 @@ public class LockerServiceImpl implements LockerService {
         locker.updateToken(accessToken);
         lockerRepository.save(locker);
 
-
         // 5. 사용 가능한 Robot 찾기
-        Robot robot = robotRepository.findByRobotStatus(0L)
+        RobotStatus robotStatus = robotStatusRepository.findById(0L)
+                .orElseThrow(() -> new NotFoundException("RobotStatus not found"));
+
+        Robot robot = robotRepository.findByRobotStatus(robotStatus)
                 .orElseThrow(() -> new RuntimeException("No available robot"));
+
+        // 6. 사용 로그 생성
+        LockerUsageLog usageLog = LockerUsageLog.builder()
+                .locker(locker)
+                .user(user)
+                .storeTime(LocalDateTime.now())
+                .storeRobot(robot)
+                .build();
+
+        usageLogRepository.save(usageLog);
 
         return StorageResponse.builder()
                 .lockerId(1234L)
