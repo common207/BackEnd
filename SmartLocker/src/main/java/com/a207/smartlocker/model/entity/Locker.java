@@ -1,9 +1,6 @@
 package com.a207.smartlocker.model.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 import jakarta.persistence.*;
 
 // entity/Locker.java
@@ -12,6 +9,7 @@ import jakarta.persistence.*;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Locker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +26,12 @@ public class Locker {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "token_id", nullable = true) // Nullable Foreign Key reference
     private AccessToken token;
+
+    public void updateStatus(LockerStatus lockerStatus) {
+        this.lockerStatus = lockerStatus;
+    }
+
+    public void updateToken(AccessToken token) {
+        this.token = token;
+    }
 }

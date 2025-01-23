@@ -1,11 +1,17 @@
 package com.a207.smartlocker.serviceImpl;
 
+import com.a207.smartlocker.exception.NotFoundException;
 import com.a207.smartlocker.model.dto.StorageRequest;
 import com.a207.smartlocker.model.dto.StorageResponse;
 import com.a207.smartlocker.model.entity.AccessToken;
+import com.a207.smartlocker.model.entity.LockerStatus;
 import com.a207.smartlocker.model.entity.User;
+import com.a207.smartlocker.model.entity.Locker;
 import com.a207.smartlocker.repository.AccessTokenRepository;
+import com.a207.smartlocker.repository.LockerStatusRepository;
 import com.a207.smartlocker.repository.UserRepository;
+import com.a207.smartlocker.repository.LockerRepository;
+import com.a207.smartlocker.repository.LockerStatusRepository;
 import com.a207.smartlocker.service.LockerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +25,8 @@ import java.util.Random;
 public class LockerServiceImpl implements LockerService {
     private final UserRepository userRepository;
     private final AccessTokenRepository accessTokenRepository;
+    private final LockerRepository lockerRepository;
+    private final LockerStatusRepository lockerStatusRepository;
 
     @Override
     public StorageResponse storeItem(StorageRequest request) {
@@ -35,6 +43,17 @@ public class LockerServiceImpl implements LockerService {
         AccessToken accessToken = accessTokenRepository.save(AccessToken.builder()
                 .tokenValue((long) tokenValue)
                 .build());
+
+        // 4. Locker 상태 업데이트
+        Locker locker = lockerRepository.findByLockerId(request.getLockerID())
+                .orElseThrow(() -> new NotFoundException("Locker not found"));
+
+        LockerStatus status = lockerStatusRepository.findById(1L)
+                        .orElseThrow(() -> new NotFoundException("LockerStatus not found"));
+
+        locker.updateStatus(status); // 사용중 상태로 변경
+        locker.updateToken(accessToken);
+        lockerRepository.save(locker);
 
         return StorageResponse.builder()
                 .lockerId(1234L)
