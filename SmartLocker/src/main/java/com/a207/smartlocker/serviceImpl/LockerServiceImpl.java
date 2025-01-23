@@ -7,10 +7,8 @@ import com.a207.smartlocker.model.entity.AccessToken;
 import com.a207.smartlocker.model.entity.LockerStatus;
 import com.a207.smartlocker.model.entity.User;
 import com.a207.smartlocker.model.entity.Locker;
-import com.a207.smartlocker.repository.AccessTokenRepository;
-import com.a207.smartlocker.repository.LockerStatusRepository;
-import com.a207.smartlocker.repository.UserRepository;
-import com.a207.smartlocker.repository.LockerRepository;
+import com.a207.smartlocker.model.entity.Robot;
+import com.a207.smartlocker.repository.*;
 import com.a207.smartlocker.repository.LockerStatusRepository;
 import com.a207.smartlocker.service.LockerService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +25,7 @@ public class LockerServiceImpl implements LockerService {
     private final AccessTokenRepository accessTokenRepository;
     private final LockerRepository lockerRepository;
     private final LockerStatusRepository lockerStatusRepository;
+    private final RobotRepository robotRepository;
 
     @Override
     public StorageResponse storeItem(StorageRequest request) {
@@ -54,6 +53,11 @@ public class LockerServiceImpl implements LockerService {
         locker.updateStatus(status); // 사용중 상태로 변경
         locker.updateToken(accessToken);
         lockerRepository.save(locker);
+
+
+        // 5. 사용 가능한 Robot 찾기
+        Robot robot = robotRepository.findByRobotStatus(0L)
+                .orElseThrow(() -> new RuntimeException("No available robot"));
 
         return StorageResponse.builder()
                 .lockerId(1234L)
