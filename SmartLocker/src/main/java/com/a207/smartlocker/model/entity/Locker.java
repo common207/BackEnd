@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import jakarta.persistence.*;
 
-// entity/Locker.java
+
 @Entity
 @Table(name = "lockers")
 @Getter @Setter
@@ -12,18 +12,22 @@ import jakarta.persistence.*;
 @AllArgsConstructor
 @Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
+
 public class Locker {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long lockerId; // Matches DB SERIAL as LongEGER
+    private Long lockerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "locker_status_id", nullable = false)
-    private LockerStatus lockerStatus; // Non-nullable Foreign Key reference
+    @ManyToOne
+    @JoinColumn(name = "token_id")
+    private AccessToken tokenId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "locker_location_id", nullable = false)
-    private LockerLocation lockerLocation; // Non-nullable Foreign Key reference
+
+    public Long getTokenId() {
+        return tokenId != null ? tokenId.getTokenId() : null;
+    }
+}
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "token_id", nullable = true) // Nullable Foreign Key reference
@@ -37,3 +41,4 @@ public class Locker {
         this.token = token;
     }
 }
+
