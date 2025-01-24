@@ -25,7 +25,7 @@ public class Robot {
     private Long completedTasks; // Default value 0, Non-nullable
 
     @Column(nullable = false)
-    private LocalDateTime lastMaLongenance; // Non-nullable TIMESTAMP
+    private LocalDateTime lastMaintenance; // Non-nullable TIMESTAMP
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "robot_status_id", nullable = false)
