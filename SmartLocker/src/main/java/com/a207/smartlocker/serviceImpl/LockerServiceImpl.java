@@ -55,7 +55,7 @@ public class LockerServiceImpl implements LockerService {
         lockerRepository.save(locker);
 
         // 5. 사용 가능한 Robot 찾기
-        RobotStatus robotStatus = robotStatusRepository.findById(0L)
+        RobotStatus robotStatus = robotStatusRepository.findById(1L)
                 .orElseThrow(() -> new NotFoundException("RobotStatus not found"));
 
         Robot robot = robotRepository.findByRobotStatus(robotStatus)
