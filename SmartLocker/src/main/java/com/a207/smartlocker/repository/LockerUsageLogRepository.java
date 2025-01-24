@@ -6,5 +6,5 @@ import com.a207.smartlocker.model.entity.LockerUsageLog;
 import java.util.Optional;
 
 public interface LockerUsageLogRepository extends JpaRepository<LockerUsageLog, Long> {
-    Optional<LockerUsageLog> findFirstByLockerIdAndRetrieveTimeIsNull(Long lockerId);
+    Optional<LockerUsageLog> findFirstByLocker_LockerIdAndRetrieveTimeIsNull(Long lockerId);
 }

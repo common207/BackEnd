@@ -20,25 +20,27 @@ public class Locker {
     private Long lockerId;
 
     @ManyToOne
-    @JoinColumn(name = "token_id")
-    private AccessToken tokenId;
+    @JoinColumn(name = "locker_status_id")
+    private LockerStatus lockerStatus;
 
+    @ManyToOne
+    @JoinColumn(name = "locker_location_id")
+    private LockerLocation lockerLocation;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "token_id", nullable = true) // Nullable Foreign Key reference
+    private AccessToken tokenId;
 
     public Long getTokenId() {
         return tokenId != null ? tokenId.getTokenId() : null;
-    }
-}
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "token_id", nullable = true) // Nullable Foreign Key reference
-    private AccessToken token;
+    }    
 
     public void updateStatus(LockerStatus lockerStatus) {
         this.lockerStatus = lockerStatus;
     }
 
-    public void updateToken(AccessToken token) {
-        this.token = token;
+    public void updateToken(AccessToken tokenId) {
+        this.tokenId = tokenId;
     }
 }
 
