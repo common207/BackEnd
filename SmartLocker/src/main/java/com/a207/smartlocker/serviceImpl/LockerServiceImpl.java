@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -75,6 +76,11 @@ public class LockerServiceImpl implements LockerService {
                 .tokenValue(accessToken.getTokenValue())
                 .message("Storage request successful")
                 .build();
+    }
+
+    @Override
+    public List<Locker> getLockersByLocation(String locationName) {
+        return lockerRepository.findLockersByLocationName(locationName);
     }
 
     private int generateRandomToken() {
