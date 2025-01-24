@@ -1,13 +1,16 @@
 package com.a207.smartlocker.model.entity;
 
+import lombok.*;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Table(name = "access_tokens")
-@Getter
+
+@Getter 
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AccessToken {
 
     @Id

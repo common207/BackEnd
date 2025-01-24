@@ -1,9 +1,6 @@
 package com.a207.smartlocker.model.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 // dto/LockerDto.java
 @Getter @Setter
