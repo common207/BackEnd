@@ -19,10 +19,4 @@ public class LockerLocation {
 
     @Column(nullable = false)
     private String locationName; // Non-nullable
-
-    @Column(nullable = false)
-    private Long totalLockers; // Non-nullable LongEGER
-
-    @Column(nullable = false)
-    private Long availableLockers; // Non-nullable LongEGER
 }
