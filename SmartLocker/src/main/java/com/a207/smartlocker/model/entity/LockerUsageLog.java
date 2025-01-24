@@ -30,12 +30,12 @@ public class LockerUsageLog {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_robot_id", nullable = false)
-    private Robot storeRobot; // Non-nullable Foreign Key reference
+    private Robot storeRobotId; // Non-nullable Foreign Key reference
 
     @Column
     private LocalDateTime retrieveTime; // Nullable
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "retrieve_robot_id")
-    private Robot retrieveRobot; // Nullable Foreign Key reference
+    private Robot retrieveRobotId; // Nullable Foreign Key reference
 }
