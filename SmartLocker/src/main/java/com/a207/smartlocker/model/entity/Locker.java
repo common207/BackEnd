@@ -1,5 +1,6 @@
 package com.a207.smartlocker.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import jakarta.persistence.*;
 
@@ -10,6 +11,7 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Locker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

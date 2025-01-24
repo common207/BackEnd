@@ -1,6 +1,7 @@
 package com.a207.smartlocker.serviceImpl;
 
 import com.a207.smartlocker.exception.NotFoundException;
+import com.a207.smartlocker.model.dto.LockerDto;
 import com.a207.smartlocker.model.dto.StorageRequest;
 import com.a207.smartlocker.model.dto.StorageResponse;
 import com.a207.smartlocker.model.entity.*;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
