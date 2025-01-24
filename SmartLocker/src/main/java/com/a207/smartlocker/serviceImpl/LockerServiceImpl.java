@@ -46,7 +46,7 @@ public class LockerServiceImpl implements LockerService {
         return RetrieveResponse.builder()
                 .lockerId(request.getLockerId())
                 .tokenValue(request.getTokenValue())
-                .message("Item successfully retrieved from locker ID: " + request.getLockerId())
+                .message(request.getLockerId() + "번 보관함의 수령 요청")
                 .build();
     }
 }
