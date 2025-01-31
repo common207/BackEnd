@@ -12,6 +12,7 @@ public interface LockerRepository extends JpaRepository<Locker, Long> {
     Optional<Locker> findByLockerId(Long lockerId);
 
     @Query("SELECT l FROM Locker l WHERE l.lockerLocation.locationId IN " +
-            "(SELECT loc.locationId FROM LockerLocation loc WHERE loc.locationName = :locationName)")
+            "(SELECT loc.locationId FROM LockerLocation loc WHERE loc.locationName = :locationName)" +
+    "ORDER BY l.lockerId")
     List<Locker> findLockersByLocationName(@Param("locationName") String locationName);
 }

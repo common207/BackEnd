@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class StorageRequest {
-    private Long lockerID;
+    private Long lockerId;
     private String phoneNumber;
 }

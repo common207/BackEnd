@@ -1,6 +1,7 @@
 package com.a207.smartlocker.serviceImpl;
 
 
+import com.a207.smartlocker.exception.custom.NoAvailableRobotException;
 import com.a207.smartlocker.model.dto.RetrieveRequest;
 import com.a207.smartlocker.model.dto.RetrieveResponse;
 import com.a207.smartlocker.model.entity.Locker;
@@ -8,7 +9,6 @@ import com.a207.smartlocker.model.entity.AccessToken;
 import com.a207.smartlocker.model.entity.LockerStatus;
 import com.a207.smartlocker.model.entity.LockerUsageLog;
 import com.a207.smartlocker.model.entity.User;
-import com.a207.smartlocker.model.entity.RobotStatus;
 import com.a207.smartlocker.model.entity.Robot;
 import com.a207.smartlocker.repository.LockerRepository;
 import com.a207.smartlocker.repository.AccessTokenRepository;
@@ -16,11 +16,12 @@ import com.a207.smartlocker.repository.LockerStatusRepository;
 import com.a207.smartlocker.repository.LockerUsageLogRepository;
 import com.a207.smartlocker.repository.UserRepository;
 import com.a207.smartlocker.repository.RobotRepository;
-import com.a207.smartlocker.repository.RobotStatusRepository;
-import com.a207.smartlocker.exception.NotFoundException;
+import com.a207.smartlocker.exception.custom.NotFoundException;
 import com.a207.smartlocker.model.dto.StorageRequest;
 import com.a207.smartlocker.model.dto.StorageResponse;
 import com.a207.smartlocker.service.LockerService;
+import com.a207.smartlocker.service.RobotControlService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Random;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class LockerServiceImpl implements LockerService {
     private final UserRepository userRepository;
@@ -36,13 +38,13 @@ public class LockerServiceImpl implements LockerService {
     private final LockerStatusRepository lockerStatusRepository;
     private final RobotRepository robotRepository;
     private final LockerUsageLogRepository lockerUsageLogRepository;
-    private final RobotStatusRepository robotStatusRepository;
+    private final RobotControlService robotControlService;
 
     @Override
     public StorageResponse storeItem(StorageRequest request) {
         // 1. 사용 가능한 로봇 찾기
         Robot storeRobot = robotRepository.findAndUpdateRobotStatus(1L, 2L)
-                .orElseThrow(() -> new RuntimeException("No available robot"));
+                .orElseThrow(() -> new NoAvailableRobotException("사용 가능한 로봇이 없습니다."));
 
         // 2. 사용자 확인/생성
         User user = userRepository.findByPhoneNumber(request.getPhoneNumber())
@@ -57,17 +59,30 @@ public class LockerServiceImpl implements LockerService {
                 .build());
 
         // 4. 락커 상태 업데이트
-        Locker locker = lockerRepository.findByLockerId(request.getLockerID())
-                .orElseThrow(() -> new NotFoundException("Locker not found"));
+        Locker locker = lockerRepository.findByLockerId(request.getLockerId())
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 사물함 번호입니다."));
 
         LockerStatus status = lockerStatusRepository.findById(2L)
                 .orElseThrow(() -> new NotFoundException("LockerStatus not found"));
 
-        locker.updateStatus(status);
-        locker.updateToken(accessToken);
+        locker.updateLockerStatus(status, accessToken);
         lockerRepository.save(locker);
 
-        // 5. 사용 로그 생성
+        // 5. 로봇 작업 실행
+        boolean robotResult = robotControlService.controlRobot(  // 주입받은 서비스 사용
+                storeRobot.getRobotId(),
+                request.getLockerId(),
+                "store"
+        );
+
+        if (!robotResult) {
+            throw new NotFoundException("Robot operation failed");
+        }
+
+        // 작업 성공 시 사용한 로봇의 상태를 '대기 중'으로 변경
+        robotRepository.updateRobotStatus(storeRobot.getRobotId(), 1L);
+
+        // 6. 사용 로그 생성
         LockerUsageLog usageLog = LockerUsageLog.builder()
                 .locker(locker)
                 .user(user)
@@ -76,11 +91,11 @@ public class LockerServiceImpl implements LockerService {
                 .build();
         lockerUsageLogRepository.save(usageLog);
 
-        // 6. 결과 리턴
+        // 7. 결과 리턴
         return StorageResponse.builder()
                 .lockerId(locker.getLockerId())
                 .tokenValue(accessToken.getTokenValue())
-                .message("보관 요청 성공")
+                .message("보관 완료")
                 .build();
     }
 
@@ -107,7 +122,28 @@ public class LockerServiceImpl implements LockerService {
             throw new Exception("토큰 불일치: " + request.getLockerId());
         }
 
-        // 4. 락커 상태 업데이트
+        // 4. 로봇 작업 실행
+        boolean robotResult = robotControlService.controlRobot(  // 주입받은 서비스 사용
+                retrieveRobot.getRobotId(),
+                request.getLockerId(),
+                "store"
+        );
+
+        if (!robotResult) {
+            throw new NotFoundException("Robot operation failed");
+        }
+
+        // 작업 성공 시 사용한 로봇의 상태를 '대기 중'으로 변경
+        robotRepository.updateRobotStatus(retrieveRobot.getRobotId(), 1L);
+        
+        // 5. 락커 상태 업데이트
+        LockerStatus status = lockerStatusRepository.findById(1L)
+                .orElseThrow(() -> new NotFoundException("LockerStatus not found"));
+
+        locker.updateLockerStatus(status, null);
+        lockerRepository.save(locker);
+        
+        // 5. 락커 상태 업데이트
         locker.setTokenId(null);
         lockerRepository.save(locker);
 
@@ -116,14 +152,14 @@ public class LockerServiceImpl implements LockerService {
         locker.setLockerStatus(lockerStatus);
         lockerStatusRepository.save(lockerStatus);
 
-        // 5. 사용 로그 업데이트
+        // 6. 사용 로그 업데이트
         LockerUsageLog usageLog = lockerUsageLogRepository.findFirstByLocker_LockerIdAndRetrieveTimeIsNull(request.getLockerId())
                 .orElseThrow(() -> new Exception("사용 중인 로그를 찾을 수 없음: " + request.getLockerId()));
         usageLog.setRetrieveRobotId(retrieveRobot);
         usageLog.setRetrieveTime(LocalDateTime.now());
         lockerUsageLogRepository.save(usageLog);
 
-        // 6. 결과 리턴
+        // 7. 결과 리턴
         return RetrieveResponse.builder()
                 .lockerId(request.getLockerId())
                 .tokenValue(request.getTokenValue())
