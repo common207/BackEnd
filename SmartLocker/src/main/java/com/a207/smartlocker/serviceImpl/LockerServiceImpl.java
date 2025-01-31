@@ -1,6 +1,7 @@
 package com.a207.smartlocker.serviceImpl;
 
 
+import com.a207.smartlocker.exception.custom.NoAvailableRobotException;
 import com.a207.smartlocker.model.dto.RetrieveRequest;
 import com.a207.smartlocker.model.dto.RetrieveResponse;
 import com.a207.smartlocker.model.entity.Locker;
@@ -15,7 +16,7 @@ import com.a207.smartlocker.repository.LockerStatusRepository;
 import com.a207.smartlocker.repository.LockerUsageLogRepository;
 import com.a207.smartlocker.repository.UserRepository;
 import com.a207.smartlocker.repository.RobotRepository;
-import com.a207.smartlocker.exception.NotFoundException;
+import com.a207.smartlocker.exception.custom.NotFoundException;
 import com.a207.smartlocker.model.dto.StorageRequest;
 import com.a207.smartlocker.model.dto.StorageResponse;
 import com.a207.smartlocker.service.LockerService;
@@ -43,7 +44,7 @@ public class LockerServiceImpl implements LockerService {
     public StorageResponse storeItem(StorageRequest request) {
         // 1. 사용 가능한 로봇 찾기
         Robot storeRobot = robotRepository.findAndUpdateRobotStatus(1L, 2L)
-                .orElseThrow(() -> new RuntimeException("No available robot"));
+                .orElseThrow(() -> new NoAvailableRobotException("사용 가능한 로봇이 없습니다."));
 
         // 2. 사용자 확인/생성
         User user = userRepository.findByPhoneNumber(request.getPhoneNumber())
@@ -59,13 +60,12 @@ public class LockerServiceImpl implements LockerService {
 
         // 4. 락커 상태 업데이트
         Locker locker = lockerRepository.findByLockerId(request.getLockerId())
-                .orElseThrow(() -> new NotFoundException("Locker not found"));
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 사물함 번호입니다."));
 
         LockerStatus status = lockerStatusRepository.findById(2L)
                 .orElseThrow(() -> new NotFoundException("LockerStatus not found"));
 
-        locker.updateStatus(status);
-        locker.updateToken(accessToken);
+        locker.updateLockerStatus(status, accessToken);
         lockerRepository.save(locker);
 
         // 5. 로봇 작업 실행
@@ -135,7 +135,14 @@ public class LockerServiceImpl implements LockerService {
 
         // 작업 성공 시 사용한 로봇의 상태를 '대기 중'으로 변경
         robotRepository.updateRobotStatus(retrieveRobot.getRobotId(), 1L);
+        
+        // 5. 락커 상태 업데이트
+        LockerStatus status = lockerStatusRepository.findById(1L)
+                .orElseThrow(() -> new NotFoundException("LockerStatus not found"));
 
+        locker.updateLockerStatus(status, null);
+        lockerRepository.save(locker);
+        
         // 5. 락커 상태 업데이트
         locker.setTokenId(null);
         lockerRepository.save(locker);

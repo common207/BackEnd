@@ -33,14 +33,11 @@ public class Locker {
 
     public Long getTokenId() {
         return tokenId != null ? tokenId.getTokenId() : null;
-    }    
-
-    public void updateStatus(LockerStatus lockerStatus) {
-        this.lockerStatus = lockerStatus;
     }
 
-    public void updateToken(AccessToken tokenId) {
-        this.tokenId = tokenId;
+    public void updateLockerStatus(LockerStatus status, AccessToken token) {
+        this.lockerStatus = status;
+        this.tokenId = token;
     }
 }
 
