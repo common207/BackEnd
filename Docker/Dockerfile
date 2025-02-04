@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # JAR 파일 복사 (target 디렉토리의 jar 파일)
-COPY SmartLocker/target/*.jar app.jar
+COPY ../SmartLocker/target/*.jar app.jar
 
 # 애플리케이션 포트 노출
 EXPOSE 8080
