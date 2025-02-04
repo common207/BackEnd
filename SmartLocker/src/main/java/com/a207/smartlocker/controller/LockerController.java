@@ -42,7 +42,6 @@ public class LockerController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(RetrieveResponse.builder()
                     .lockerId(request.getLockerId())
-                    .tokenValue(request.getTokenValue())
                     .message("Error: " + e.getMessage())
                     .build());
         }

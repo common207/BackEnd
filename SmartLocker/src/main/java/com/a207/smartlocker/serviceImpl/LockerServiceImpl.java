@@ -4,18 +4,8 @@ package com.a207.smartlocker.serviceImpl;
 import com.a207.smartlocker.exception.custom.NoAvailableRobotException;
 import com.a207.smartlocker.model.dto.RetrieveRequest;
 import com.a207.smartlocker.model.dto.RetrieveResponse;
-import com.a207.smartlocker.model.entity.Locker;
-import com.a207.smartlocker.model.entity.AccessToken;
-import com.a207.smartlocker.model.entity.LockerStatus;
-import com.a207.smartlocker.model.entity.LockerUsageLog;
-import com.a207.smartlocker.model.entity.User;
-import com.a207.smartlocker.model.entity.Robot;
-import com.a207.smartlocker.repository.LockerRepository;
-import com.a207.smartlocker.repository.AccessTokenRepository;
-import com.a207.smartlocker.repository.LockerStatusRepository;
-import com.a207.smartlocker.repository.LockerUsageLogRepository;
-import com.a207.smartlocker.repository.UserRepository;
-import com.a207.smartlocker.repository.RobotRepository;
+import com.a207.smartlocker.model.entity.*;
+import com.a207.smartlocker.repository.*;
 import com.a207.smartlocker.exception.custom.NotFoundException;
 import com.a207.smartlocker.model.dto.StorageRequest;
 import com.a207.smartlocker.model.dto.StorageResponse;
@@ -39,26 +29,23 @@ public class LockerServiceImpl implements LockerService {
     private final RobotRepository robotRepository;
     private final LockerUsageLogRepository lockerUsageLogRepository;
     private final RobotControlService robotControlService;
+    private final LockerQueueRepository lockerQueueRepository;
 
     @Override
     public StorageResponse storeItem(StorageRequest request) {
-        // 1. 사용 가능한 로봇 찾기
-        Robot storeRobot = robotRepository.findAndUpdateRobotStatus(1L, 2L)
-                .orElseThrow(() -> new NoAvailableRobotException("사용 가능한 로봇이 없습니다."));
-
-        // 2. 사용자 확인/생성
+        // 1. 사용자 확인/생성
         User user = userRepository.findByPhoneNumber(request.getPhoneNumber())
                 .orElseGet(() -> userRepository.save(User.builder()
                         .phoneNumber(request.getPhoneNumber())
                         .build()));
 
-        // 3. 6자리 토큰 생성
+        // 2. 6자리 토큰 생성
         int tokenValue = generateRandomToken();
         AccessToken accessToken = accessTokenRepository.save(AccessToken.builder()
                 .tokenValue((long) tokenValue)
                 .build());
 
-        // 4. 락커 상태 업데이트
+        // 3. 락커 상태 업데이트
         Locker locker = lockerRepository.findByLockerId(request.getLockerId())
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 사물함 번호입니다."));
 
@@ -68,48 +55,35 @@ public class LockerServiceImpl implements LockerService {
         locker.updateLockerStatus(status, accessToken);
         lockerRepository.save(locker);
 
-        // 5. 로봇 작업 실행
-        boolean robotResult = robotControlService.controlRobot(  // 주입받은 서비스 사용
-                storeRobot.getRobotId(),
-                request.getLockerId(),
-                "store"
-        );
+        // 4. 락커 큐에 추가
+        LockerQueue lockerQueue = lockerQueueRepository.save(LockerQueue.builder()
+                .locker(locker)
+                .requestType("Store")
+                .build());
 
-        if (!robotResult) {
-            throw new NotFoundException("Robot operation failed");
-        }
-
-        // 작업 성공 시 사용한 로봇의 상태를 '대기 중'으로 변경
-        robotRepository.updateRobotStatus(storeRobot.getRobotId(), 1L);
-
-        // 6. 사용 로그 생성
+        // 5. 사용 로그 생성
         LockerUsageLog usageLog = LockerUsageLog.builder()
                 .locker(locker)
                 .user(user)
                 .storeTime(LocalDateTime.now())
-                .storeRobotId(storeRobot)
                 .build();
         lockerUsageLogRepository.save(usageLog);
 
-        // 7. 결과 리턴
+        // 6. 결과 리턴
         return StorageResponse.builder()
                 .lockerId(locker.getLockerId())
                 .tokenValue(accessToken.getTokenValue())
-                .message("보관 완료")
+                .message(request.getLockerId() + "번 보관함의 보관 요청 완료")
                 .build();
     }
 
     @Override
     public RetrieveResponse retrieveItem(RetrieveRequest request) throws Exception {
-        // 1. 사용 가능한 로봇 찾기
-        Robot retrieveRobot = robotRepository.findAndUpdateRobotStatus(1L, 2L)
-                .orElseThrow(() -> new RuntimeException("No available robot"));
-
-        // 2. 락커 조회
+        // 1. 락커 조회
         Locker locker = lockerRepository.findById(request.getLockerId())
                 .orElseThrow(() -> new Exception("해당 락커를 찾을 수 없음: " + request.getLockerId()));
 
-        // 3. 토큰 확인
+        // 2. 토큰 확인
         Long tokenId = locker.getTokenId();
         if (tokenId == null) {
             throw new Exception("락커에 토큰이 없음: " + request.getLockerId());
@@ -122,47 +96,15 @@ public class LockerServiceImpl implements LockerService {
             throw new Exception("토큰 불일치: " + request.getLockerId());
         }
 
-        // 4. 로봇 작업 실행
-        boolean robotResult = robotControlService.controlRobot(  // 주입받은 서비스 사용
-                retrieveRobot.getRobotId(),
-                request.getLockerId(),
-                "store"
-        );
+        // 3. 락커 큐에 추가
+        LockerQueue lockerQueue = lockerQueueRepository.save(LockerQueue.builder()
+                .locker(locker)
+                .requestType("Retrive")
+                .build());
 
-        if (!robotResult) {
-            throw new NotFoundException("Robot operation failed");
-        }
-
-        // 작업 성공 시 사용한 로봇의 상태를 '대기 중'으로 변경
-        robotRepository.updateRobotStatus(retrieveRobot.getRobotId(), 1L);
-        
-        // 5. 락커 상태 업데이트
-        LockerStatus status = lockerStatusRepository.findById(1L)
-                .orElseThrow(() -> new NotFoundException("LockerStatus not found"));
-
-        locker.updateLockerStatus(status, null);
-        lockerRepository.save(locker);
-        
-        // 5. 락커 상태 업데이트
-        locker.setTokenId(null);
-        lockerRepository.save(locker);
-
-        LockerStatus lockerStatus = lockerStatusRepository.findById(1L)
-                .orElseThrow(() -> new Exception("락커 상태를 찾을 수 없음: " + request.getLockerId()));
-        locker.setLockerStatus(lockerStatus);
-        lockerStatusRepository.save(lockerStatus);
-
-        // 6. 사용 로그 업데이트
-        LockerUsageLog usageLog = lockerUsageLogRepository.findFirstByLocker_LockerIdAndRetrieveTimeIsNull(request.getLockerId())
-                .orElseThrow(() -> new Exception("사용 중인 로그를 찾을 수 없음: " + request.getLockerId()));
-        usageLog.setRetrieveRobotId(retrieveRobot);
-        usageLog.setRetrieveTime(LocalDateTime.now());
-        lockerUsageLogRepository.save(usageLog);
-
-        // 7. 결과 리턴
+        // 4. 결과 리턴
         return RetrieveResponse.builder()
                 .lockerId(request.getLockerId())
-                .tokenValue(request.getTokenValue())
                 .message(request.getLockerId() + "번 보관함의 수령 요청 완료")
                 .build();
     }
