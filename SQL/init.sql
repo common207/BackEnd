@@ -64,19 +64,26 @@ CREATE TABLE locker_usage_logs (
     FOREIGN KEY (retrieve_robot_id) REFERENCES robots(robot_id)
 );
 
--- 9. locker_status 테이블 초기화
+-- 9. locker queue table (lockers 참조)
+CREATE TABLE locker_queue (
+    queue_id SERIAL PRIMARY KEY,
+    locker_id INTEGER REFERENCES lockers(locker_id),
+    request_type VARCHAR(10) NOT NULL
+);
+
+-- 10. locker status 테이블 초기화
 INSERT INTO locker_status (locker_status) VALUES 
     ('사용가능'),
     ('사용중'),
     ('수리중');
     
--- 10. Insert initial values for locker_locations
+-- 11. Insert initial values for locker_locations
 INSERT INTO locker_locations (location_name) VALUES 
     ('A'),
     ('B'),
     ('C');
     
--- 11. lockers 테이블 초기화
+-- 12. lockers 테이블 초기화
 INSERT INTO lockers (locker_id, locker_status_id, locker_location_id, token_id)
 SELECT 
  CASE 
@@ -84,7 +91,11 @@ SELECT
    WHEN s.id <= 120 THEN (s.id - 60) + 200 
    ELSE (s.id - 120) + 300
  END,
- 1, -- status_id
+  CASE 
+   WHEN s.id <= 60 THEN 1
+   WHEN s.id <= 120 THEN 2
+   ELSE 3
+ END, -- status_id
  CASE 
    WHEN s.id <= 60 THEN 1
    WHEN s.id <= 120 THEN 2
@@ -93,13 +104,13 @@ SELECT
  NULL -- token_id
 FROM generate_series(1, 180) s(id);
 
--- 12. robot_status 테이블 초기화
+-- 13. robot status 테이블 초기화
 INSERT INTO robot_status (robot_status) VALUES 
     ('대기중'),
     ('사용중'),
     ('수리중');
     
--- 13. robots 테이블 초기화
+-- 14. robots 테이블 초기화
 INSERT INTO robots (robot_name, completed_tasks, last_maintenance, robot_status_id) VALUES 
 	('Worker001', 0, '2025-01-01', 1),
 	('Worker002', 0, '2025-01-01', 3),
@@ -107,7 +118,7 @@ INSERT INTO robots (robot_name, completed_tasks, last_maintenance, robot_status_
 	('Worker004', 0, '2025-01-01', 3),
 	('Worker005', 0, '2025-01-01', 3);
 
--- 14. 인덱스 생성
+-- 15. 인덱스 생성
 -- locker_usage_logs 인덱스(locker_id가 일치하면서 retrieve_time가 NULL)
 CREATE INDEX idx_usage_logs_locker_retrieve ON locker_usage_logs(locker_id) WHERE retrieve_time IS NULL;
 
@@ -117,16 +128,16 @@ CREATE INDEX idx_users_phone ON users(phone_number);
 -- lockers 인덱스(locker_location_id)
 CREATE INDEX idx_lockers_location ON lockers(locker_location_id);
 
--- locker_locations 인덱스(location_name)
+-- locker locations 인덱스(location_name)
 CREATE INDEX idx_lockers_location_name ON locker_locations(location_name);
 
--- access_tokens 인덱스(token_id)
+-- access tokens 인덱스(token_id)
 CREATE INDEX idx_access_tokens_token_id ON access_tokens(token_id);
 
 -- robots 인덱스(robot_status_id)
 CREATE INDEX idx_robots_status ON robots(robot_status_id);
 
--- 15. 주석 추가
+-- 16. 주석 추가
 COMMENT ON TABLE locker_usage_logs IS '보관 정보 누적 관리';
 COMMENT ON TABLE users IS '유저 전화번호 누적 관리';
 COMMENT ON TABLE lockers IS '보관함 정보 관리';
