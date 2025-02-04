@@ -23,7 +23,9 @@ jobs:
         distribution: 'adopt'
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: |
+        cd SmartLocker
+        mvn -B package --file pom.xml
 
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
