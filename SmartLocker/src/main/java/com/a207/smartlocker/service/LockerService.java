@@ -12,9 +12,7 @@ import java.util.List;
 
 
 public interface LockerService {
-
     RetrieveResponse retrieveItem(RetrieveRequest request) throws Exception;
-
     StorageResponse storeItem(StorageRequest request);
     List<Locker> getLockersByLocation(String locationName);
 }
