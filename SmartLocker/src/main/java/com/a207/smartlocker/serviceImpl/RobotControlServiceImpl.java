@@ -13,7 +13,7 @@ import java.util.Map;
 @Service
 public class RobotControlServiceImpl implements RobotControlService {
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String ROBOT_SERVER_URL = "http://localhost:5001";
+    private static final String ROBOT_SERVER_URL = "http://localhost:5001/rasp";
 
     public  boolean controlRobot(Long robotId, Long lockerId, String action) {
         Map<String, Object> request = new HashMap<>();
