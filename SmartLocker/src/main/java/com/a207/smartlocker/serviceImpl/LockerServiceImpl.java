@@ -97,7 +97,7 @@ public class LockerServiceImpl implements LockerService {
         // 3. 락커 큐에 추가
         LockerQueue lockerQueue = lockerQueueRepository.save(LockerQueue.builder()
                 .lockerId(locker)
-                .requestType("Retrive")
+                .requestType("Retrieve")
                 .build());
 
         // 4. 결과 리턴

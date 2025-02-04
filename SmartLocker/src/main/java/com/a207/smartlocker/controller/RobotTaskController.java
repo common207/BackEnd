@@ -24,7 +24,6 @@ public class RobotTaskController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     RobotTaskResponse.builder()
-                            .lockerId(-1L)
                             .message("작업 수행 실패: " + e.getMessage())
                             .success(false)
                             .build()

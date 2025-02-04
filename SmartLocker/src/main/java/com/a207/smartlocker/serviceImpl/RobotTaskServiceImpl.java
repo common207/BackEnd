@@ -62,7 +62,6 @@ public class RobotTaskServiceImpl implements RobotTaskService {
 
         // 9. 응답 생성
         return RobotTaskResponse.builder()
-                .lockerId(locker.getLockerId())
                 .success(true)
                 .message("로봇 작업 완료")
                 .build();
