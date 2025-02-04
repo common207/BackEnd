@@ -34,7 +34,6 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         port: 22
-        script_stop: true
         script: |
           # 현재 실행 중인 컨테이너 백업
           cd /home/ubuntu/BackEnd/Docker
