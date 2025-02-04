@@ -3,6 +3,8 @@ name: Deploy to EC2
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -30,10 +32,19 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
+          # 현재 실행 중인 컨테이너 백업
           cd /home/ubuntu/BackEnd/Docker
+          docker-compose ps -q > running_containers.txt
+          
+          # 새 버전 배포 시도
           sudo docker-compose down
           sudo docker system prune -af
           cd ../SmartLocker
           sudo git pull
           cd ../Docker
-          sudo docker-compose up --build -d
+          if ! sudo docker-compose up --build -d; then
+            # 배포 실패시 이전 버전으로 롤백
+            echo "Deployment failed, rolling back..."
+            sudo docker-compose up -d $(cat running_containers.txt)
+            exit 1
+          fi
