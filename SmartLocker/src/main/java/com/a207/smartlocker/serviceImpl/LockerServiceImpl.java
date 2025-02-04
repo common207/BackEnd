@@ -1,7 +1,6 @@
 package com.a207.smartlocker.serviceImpl;
 
 
-import com.a207.smartlocker.exception.custom.NoAvailableRobotException;
 import com.a207.smartlocker.model.dto.RetrieveRequest;
 import com.a207.smartlocker.model.dto.RetrieveResponse;
 import com.a207.smartlocker.model.entity.*;
@@ -10,7 +9,6 @@ import com.a207.smartlocker.exception.custom.NotFoundException;
 import com.a207.smartlocker.model.dto.StorageRequest;
 import com.a207.smartlocker.model.dto.StorageResponse;
 import com.a207.smartlocker.service.LockerService;
-import com.a207.smartlocker.service.RobotControlService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,7 @@ public class LockerServiceImpl implements LockerService {
     private final LockerStatusRepository lockerStatusRepository;
     private final RobotRepository robotRepository;
     private final LockerUsageLogRepository lockerUsageLogRepository;
-    private final RobotControlService robotControlService;
+    private final RobotControlServiceImpl robotControlService;
     private final LockerQueueRepository lockerQueueRepository;
 
     @Override
@@ -57,7 +55,7 @@ public class LockerServiceImpl implements LockerService {
 
         // 4. 락커 큐에 추가
         LockerQueue lockerQueue = lockerQueueRepository.save(LockerQueue.builder()
-                .locker(locker)
+                .lockerId(locker)
                 .requestType("Store")
                 .build());
 
@@ -86,7 +84,7 @@ public class LockerServiceImpl implements LockerService {
         // 2. 토큰 확인
         Long tokenId = locker.getTokenId();
         if (tokenId == null) {
-            throw new Exception("락커에 토큰이 없음: " + request.getLockerId());
+            throw new Exception("사용중인 라커가 아님: " + request.getLockerId());
         }
 
         AccessToken accessToken = accessTokenRepository.findById(tokenId)
@@ -98,7 +96,7 @@ public class LockerServiceImpl implements LockerService {
 
         // 3. 락커 큐에 추가
         LockerQueue lockerQueue = lockerQueueRepository.save(LockerQueue.builder()
-                .locker(locker)
+                .lockerId(locker)
                 .requestType("Retrive")
                 .build());
 

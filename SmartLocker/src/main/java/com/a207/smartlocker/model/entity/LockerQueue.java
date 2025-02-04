@@ -21,7 +21,7 @@ public class LockerQueue {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "locker_id")
-    private Locker locker;
+    private Locker lockerId;
 
     @Column(name = "request_type")
     private String requestType;

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class RobotTaskResponse {
-    private Long LockerId;
+    private Long lockerId;
     private boolean success;
     private String message;
 }

@@ -28,7 +28,7 @@ public class LockerController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
                     body(StorageResponse.builder()
-                            .message("Error: " + e.getMessage())
+                            .message("작업 수행 실패: " + e.getMessage())
                             .build());
         }
     }
@@ -42,7 +42,7 @@ public class LockerController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(RetrieveResponse.builder()
                     .lockerId(request.getLockerId())
-                    .message("Error: " + e.getMessage())
+                    .message("작업 수행 실패: " + e.getMessage())
                     .build());
         }
     }
