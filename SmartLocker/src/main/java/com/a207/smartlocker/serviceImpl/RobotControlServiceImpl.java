@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -24,7 +25,9 @@ import org.springframework.web.client.HttpStatusCodeException;
 @Service
 public class RobotControlServiceImpl implements RobotControlService {
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String ROBOT_SERVER_URL = "http://70.12.245.25:5001/rasp";
+
+    @Value("${robot.server.url}")
+    private String ROBOT_SERVER_URL;
 
     public boolean controlRobot(Long robotId, Long lockerId, String action) {
         try {
