@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class RobotTaskController {
     private final RobotTaskService robotTaskService;
 
-    @GetMapping("/process")
+    @PostMapping("/process")
     public ResponseEntity<RobotTaskResponse> processRobotTask() {
         try {
             RobotTaskResponse response = robotTaskService.processNextTask();
