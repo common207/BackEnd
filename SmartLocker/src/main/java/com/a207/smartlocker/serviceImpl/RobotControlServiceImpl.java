@@ -3,8 +3,10 @@ package com.a207.smartlocker.serviceImpl;
 import com.a207.smartlocker.exception.custom.RobotControlException;
 import com.a207.smartlocker.service.RobotControlService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -26,6 +28,8 @@ public class RobotControlServiceImpl implements RobotControlService {
     // DTO 클래스 생성
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class RobotControlRequest {
         private Long robot_Id;
         private Long locker_Id;
