@@ -13,7 +13,7 @@ spring:
 
 robot:
   server:
-    url: http://172.26.1.168:5001/rasp
+    url: http://70.12.245.25:5001/rasp
 
 ---
 spring:
@@ -31,7 +31,7 @@ spring:
 
 robot:
   server:
-    url: http://host.docker.internal:5001/rasp
+    url: http://172.26.1.168:5001/rasp
 
 springdoc:
   api-docs:
