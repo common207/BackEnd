@@ -14,7 +14,7 @@ public class RobotTaskController {
     private final RobotTaskService robotTaskService;
 
     @PostMapping("/process")
-    public ResponseEntity<RobotTaskResponse> processRobotTask() {
+    public ResponseEntity<RobotTaskResponse> processRobotTask(@RequestBody(required = false) RobotTaskRequest request) {
         try {
             RobotTaskResponse response = robotTaskService.processNextTask();
             return ResponseEntity.ok(response);
