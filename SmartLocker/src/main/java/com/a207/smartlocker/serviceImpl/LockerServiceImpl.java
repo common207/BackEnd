@@ -31,6 +31,14 @@ public class LockerServiceImpl implements LockerService {
 
     @Override
     public StorageResponse storeItem(StorageRequest request) {
+        // 1. 라커 사용 가능 여부 체크
+        Locker locker = lockerRepository.findByLockerId(request.getLockerId())
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 사물함 번호입니다."));
+
+        if (locker.getTokenId() == null) {
+
+        }
+
         // 1. 사용자 확인/생성
         User user = userRepository.findByPhoneNumber(request.getPhoneNumber())
                 .orElseGet(() -> userRepository.save(User.builder()
@@ -44,9 +52,6 @@ public class LockerServiceImpl implements LockerService {
                 .build());
 
         // 3. 락커 상태 업데이트
-        Locker locker = lockerRepository.findByLockerId(request.getLockerId())
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 사물함 번호입니다."));
-
         LockerStatus status = lockerStatusRepository.findById(2L)
                 .orElseThrow(() -> new NotFoundException("LockerStatus not found"));
 
