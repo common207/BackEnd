@@ -5,10 +5,7 @@ import com.a207.smartlocker.model.dto.RobotTaskResponse;
 import com.a207.smartlocker.service.RobotTaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/robot-tasks")
@@ -16,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class RobotTaskController {
     private final RobotTaskService robotTaskService;
 
-    @PostMapping("/process")
-    public ResponseEntity<RobotTaskResponse> processRobotTask(@RequestBody RobotTaskRequest request) {
+    @GetMapping("/process")
+    public ResponseEntity<RobotTaskResponse> processRobotTask() {
         try {
             RobotTaskResponse response = robotTaskService.processNextTask();
             return ResponseEntity.ok(response);
