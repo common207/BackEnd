@@ -38,6 +38,10 @@ public class RobotControlServiceImpl implements RobotControlService {
 
     public boolean controlRobot(Long robotId, Long lockerId, String action) {
         try {
+            System.out.println("실행 환경 정보:");
+            System.out.println("Java Version: " + System.getProperty("java.version"));
+            System.out.println("OS Name: " + System.getProperty("os.name"));
+            System.out.println("User Directory: " + System.getProperty("user.dir"));
             ObjectMapper objectMapper = new ObjectMapper();
 
             RobotControlRequest request = RobotControlRequest.builder()
@@ -63,6 +67,7 @@ public class RobotControlServiceImpl implements RobotControlService {
 
             return "done".equals(response.getBody());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RobotControlException("로봇 작동 중 예외가 발생하였습니다 : " + e.getMessage());
         }
     }
