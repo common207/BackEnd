@@ -1,6 +1,5 @@
 package com.a207.smartlocker.controller;
 
-import com.a207.smartlocker.model.dto.RobotTaskRequest;
 import com.a207.smartlocker.model.dto.RobotTaskResponse;
 import com.a207.smartlocker.service.RobotTaskService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,7 @@ public class RobotTaskController {
     private final RobotTaskService robotTaskService;
 
     @PostMapping("/process")
-    public ResponseEntity<RobotTaskResponse> processRobotTask(@RequestBody(required = false) RobotTaskRequest request) {
+    public ResponseEntity<RobotTaskResponse> processRobotTask() {
         try {
             RobotTaskResponse response = robotTaskService.processNextTask();
             return ResponseEntity.ok(response);

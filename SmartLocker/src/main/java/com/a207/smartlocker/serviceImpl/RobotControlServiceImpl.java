@@ -1,6 +1,7 @@
 package com.a207.smartlocker.serviceImpl;
 
 import com.a207.smartlocker.exception.custom.RobotControlException;
+import com.a207.smartlocker.model.dto.RobotControlRequest;
 import com.a207.smartlocker.service.RobotControlService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -24,17 +25,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 public class RobotControlServiceImpl implements RobotControlService {
     private final RestTemplate restTemplate = new RestTemplate();
     private static final String ROBOT_SERVER_URL = "http://70.12.245.25:5001/rasp";
-
-    // DTO 클래스 생성
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class RobotControlRequest {
-        private Long robot_Id;
-        private Long locker_Id;
-        private String action;
-    }
 
     public boolean controlRobot(Long robotId, Long lockerId, String action) {
         try {
