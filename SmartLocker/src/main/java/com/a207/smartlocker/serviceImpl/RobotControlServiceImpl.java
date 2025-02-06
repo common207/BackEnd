@@ -28,10 +28,6 @@ public class RobotControlServiceImpl implements RobotControlService {
 
     public boolean controlRobot(Long robotId, Long lockerId, String action) {
         try {
-            System.out.println("실행 환경 정보:");
-            System.out.println("Java Version: " + System.getProperty("java.version"));
-            System.out.println("OS Name: " + System.getProperty("os.name"));
-            System.out.println("User Directory: " + System.getProperty("user.dir"));
             ObjectMapper objectMapper = new ObjectMapper();
 
             RobotControlRequest request = RobotControlRequest.builder()
