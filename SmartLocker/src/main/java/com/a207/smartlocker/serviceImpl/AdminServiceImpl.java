@@ -3,9 +3,11 @@ package com.a207.smartlocker.serviceImpl;
 import com.a207.smartlocker.model.dto.AdminLoginRequest;
 import com.a207.smartlocker.model.dto.AdminLoginResponse;
 import com.a207.smartlocker.model.dto.RobotResponse;
+import com.a207.smartlocker.model.dto.UserUsageResponse;
 import com.a207.smartlocker.model.entity.Certification;
 import com.a207.smartlocker.model.entity.Robot;
 import com.a207.smartlocker.repository.CertificationRepository;
+import com.a207.smartlocker.repository.LockerUsageLogRepository;
 import com.a207.smartlocker.repository.RobotRepository;
 import com.a207.smartlocker.service.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class AdminServiceImpl implements AdminService {
     private final CertificationRepository certificationRepository;
     private final RobotRepository robotRepository;
+    private final LockerUsageLogRepository lockerUsageLogRepository;
 
     @Override
     public AdminLoginResponse login(AdminLoginRequest request) {
@@ -37,5 +40,10 @@ public class AdminServiceImpl implements AdminService {
         return robotRepository.findAllByOrderByRobotIdAsc().stream()
                 .map(RobotResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserUsageResponse> getUserUsageStatistics() {
+        return lockerUsageLogRepository.findUserUsageStatistics();
     }
 }
