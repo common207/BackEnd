@@ -1,13 +1,10 @@
 package com.a207.smartlocker.serviceImpl;
 
 
-import com.a207.smartlocker.model.dto.RetrieveRequest;
-import com.a207.smartlocker.model.dto.RetrieveResponse;
+import com.a207.smartlocker.model.dto.*;
 import com.a207.smartlocker.model.entity.*;
 import com.a207.smartlocker.repository.*;
 import com.a207.smartlocker.exception.custom.NotFoundException;
-import com.a207.smartlocker.model.dto.StorageRequest;
-import com.a207.smartlocker.model.dto.StorageResponse;
 import com.a207.smartlocker.service.LockerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -115,6 +113,13 @@ public class LockerServiceImpl implements LockerService {
     @Override
     public List<Locker> getLockersByLocation(String locationName) {
         return lockerRepository.findLockersByLocationName(locationName);
+    }
+
+    @Override
+    public List<TaskQueueResponse> getRetrieveTasks() {
+        return lockerQueueRepository.findFirst20QRetrieveQueues().stream()
+                .map(TaskQueueResponse::from)
+                .collect(Collectors.toList());
     }
 
     private int generateRandomToken() {

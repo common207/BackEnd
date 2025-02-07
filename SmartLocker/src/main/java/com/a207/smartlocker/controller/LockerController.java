@@ -48,4 +48,9 @@ public class LockerController {
     public ResponseEntity<List<Locker>> getLockerStatus(@PathVariable String locationName) {
         return ResponseEntity.ok(lockerService.getLockersByLocation(locationName));
     }
+
+    @GetMapping("/getRetrieveTasks")
+    public ResponseEntity<List<TaskQueueResponse>> getRetrieveTasks() {
+        return ResponseEntity.ok(lockerService.getRetrieveTasks());
+    }
 }
