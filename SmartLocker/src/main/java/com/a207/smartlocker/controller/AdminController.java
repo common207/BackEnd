@@ -2,6 +2,7 @@ package com.a207.smartlocker.controller;
 
 import com.a207.smartlocker.model.dto.AdminLoginRequest;
 import com.a207.smartlocker.model.dto.AdminLoginResponse;
+import com.a207.smartlocker.model.dto.RobotResponse;
 import com.a207.smartlocker.model.entity.Robot;
 import com.a207.smartlocker.service.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,8 @@ public class AdminController {
     }
 
     @GetMapping("/robots")
-    public ResponseEntity<List<Robot>> getRobots() {
-        List<Robot> robots = adminService.getAllRobots();
+    public ResponseEntity<List<RobotResponse>> getRobots() {
+        List<RobotResponse> robots = adminService.getAllRobots();
         return ResponseEntity.ok(robots);
     }
 }

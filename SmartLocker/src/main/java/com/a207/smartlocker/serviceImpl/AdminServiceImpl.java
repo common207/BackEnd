@@ -2,6 +2,7 @@ package com.a207.smartlocker.serviceImpl;
 
 import com.a207.smartlocker.model.dto.AdminLoginRequest;
 import com.a207.smartlocker.model.dto.AdminLoginResponse;
+import com.a207.smartlocker.model.dto.RobotResponse;
 import com.a207.smartlocker.model.entity.Certification;
 import com.a207.smartlocker.model.entity.Robot;
 import com.a207.smartlocker.repository.CertificationRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +33,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<Robot> getAllRobots() {
-        return robotRepository.findAll();
+    public List<RobotResponse> getAllRobots() {
+        return robotRepository.findAllByOrderByRobotIdAsc().stream()
+                .map(RobotResponse::from)
+                .collect(Collectors.toList());
     }
 }
