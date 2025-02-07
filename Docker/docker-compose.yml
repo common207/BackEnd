@@ -6,6 +6,7 @@ services:
       dockerfile: Docker/Dockerfile
     ports:
       - "8080:8080"
+    network_mode: "hosh"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
