@@ -29,8 +29,8 @@ jobs:
           mvn clean
           mvn -B package --file pom.xml
           cd ../Docker
-          docker stop docker_backend_1
-          docker rm docker_backend_1
-          docker stop docker_postgres_1
-          docker rm docker_postgres_1
+          docker stop docker-backend-1
+          docker rm docker-backend-1
+          docker stop docker-postgres-1
+          docker rm docker-postgres-1
           sudo docker-compose up --build -d
