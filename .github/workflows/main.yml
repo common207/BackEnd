@@ -26,6 +26,7 @@ jobs:
           cd /home/ubuntu/BackEnd
           sudo git pull
           cd SmartLocker
+          mvn clean
           mvn -B package --file pom.xml
           cd ../Docker
           docker stop docker_backend_1
