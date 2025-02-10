@@ -35,8 +35,8 @@ public class LockerServiceImpl implements LockerService {
         Locker locker = lockerRepository.findByLockerId(request.getLockerId())
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 사물함 번호입니다."));
 
-        if (locker.getTokenId() != null) {
-            throw new LockerAlreadyInUseException("이미 사용중인 사물함입니다.");
+        if (locker.getLockerStatus().getLockerStatusId() != 1L) {
+            throw new LockerAlreadyInUseException("현재 사용이 불가능한 사물함입니다.");
         }
 
         // 2. 사용자 확인/생성
@@ -86,7 +86,7 @@ public class LockerServiceImpl implements LockerService {
         Locker locker = lockerRepository.findById(request.getLockerId())
                 .orElseThrow(() -> new Exception("해당 락커를 찾을 수 없음: " + request.getLockerId()));
 
-        if (locker.getTokenId() == null) {
+        if (locker.getLockerStatus().getLockerStatusId() != 2L) {
             throw new LockerAlreadyInUseException("사용중이 아닌 사물함입니다.");
         }
 
