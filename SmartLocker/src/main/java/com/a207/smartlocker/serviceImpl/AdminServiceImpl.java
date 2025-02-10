@@ -1,10 +1,8 @@
 package com.a207.smartlocker.serviceImpl;
 
-import com.a207.smartlocker.model.dto.AdminLoginRequest;
-import com.a207.smartlocker.model.dto.AdminLoginResponse;
-import com.a207.smartlocker.model.dto.RobotResponse;
-import com.a207.smartlocker.model.dto.UserUsageResponse;
+import com.a207.smartlocker.model.dto.*;
 import com.a207.smartlocker.model.entity.Certification;
+import com.a207.smartlocker.model.entity.LockerUsageLog;
 import com.a207.smartlocker.model.entity.Robot;
 import com.a207.smartlocker.repository.CertificationRepository;
 import com.a207.smartlocker.repository.LockerUsageLogRepository;
@@ -13,6 +11,7 @@ import com.a207.smartlocker.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,5 +44,12 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<UserUsageResponse> getUserUsageStatistics() {
         return lockerUsageLogRepository.findUserUsageStatistics();
+    }
+
+    @Override
+    public List<LockerUsageLogResponse> getUsageLogByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        return lockerUsageLogRepository.findByStoreTimeBetween(startDate, endDate).stream()
+                .map(LockerUsageLogResponse::from)
+                .collect(Collectors.toList());
     }
 }

@@ -1,9 +1,7 @@
 package com.a207.smartlocker.controller;
 
-import com.a207.smartlocker.model.dto.AdminLoginRequest;
-import com.a207.smartlocker.model.dto.AdminLoginResponse;
-import com.a207.smartlocker.model.dto.RobotResponse;
-import com.a207.smartlocker.model.dto.UserUsageResponse;
+import com.a207.smartlocker.model.dto.*;
+import com.a207.smartlocker.model.entity.LockerUsageLog;
 import com.a207.smartlocker.model.entity.Robot;
 import com.a207.smartlocker.service.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -34,5 +32,11 @@ public class AdminController {
     public ResponseEntity<List<UserUsageResponse>> getUserUsageStatistics() {
         List<UserUsageResponse> statistics = adminService.getUserUsageStatistics();
         return ResponseEntity.ok(statistics);
+    }
+
+    @PostMapping("/usage-logs")
+    public ResponseEntity<List<LockerUsageLogResponse>> login(@RequestBody DateRangeRequest request) {
+        List<LockerUsageLogResponse> response = adminService.getUsageLogByDateRange(request.getStartDate(), request.getEndDate());
+        return ResponseEntity.ok(response);
     }
 }
