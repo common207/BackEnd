@@ -2,6 +2,7 @@ package com.a207.smartlocker.serviceImpl;
 
 
 import com.a207.smartlocker.exception.custom.LockerAlreadyInUseException;
+import com.a207.smartlocker.exception.custom.TaskAlreadyInQueueException;
 import com.a207.smartlocker.model.dto.*;
 import com.a207.smartlocker.model.entity.*;
 import com.a207.smartlocker.repository.*;
@@ -58,7 +59,7 @@ public class LockerServiceImpl implements LockerService {
         lockerRepository.save(locker);
 
         // 5. 락커 큐에 추가
-        LockerQueue lockerQueue = lockerQueueRepository.save(LockerQueue.builder()
+        lockerQueueRepository.save(LockerQueue.builder()
                 .lockerId(locker)
                 .requestType("Store")
                 .build());
@@ -103,7 +104,11 @@ public class LockerServiceImpl implements LockerService {
         }
 
         // 3. 락커 큐에 추가
-        LockerQueue lockerQueue = lockerQueueRepository.save(LockerQueue.builder()
+        if (lockerRepository.findById(request.getLockerId()).isPresent()) {
+            throw new TaskAlreadyInQueueException("이미 수령 요청이 완료된 작업입니다.");
+        }
+
+        lockerQueueRepository.save(LockerQueue.builder()
                 .lockerId(locker)
                 .requestType("Retrieve")
                 .build());

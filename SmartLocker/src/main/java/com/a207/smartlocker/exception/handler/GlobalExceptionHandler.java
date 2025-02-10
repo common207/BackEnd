@@ -64,4 +64,13 @@ public class GlobalExceptionHandler {
                 .build();
         return new ResponseEntity<>(error, HttpStatus.SERVICE_UNAVAILABLE); // 503
     }
+
+    @ExceptionHandler(TaskAlreadyInQueueException.class)
+    public ResponseEntity<ErrorResponse> handleTaskAlreadyInQueueException(TaskAlreadyInQueueException ex) {
+        ErrorResponse error = ErrorResponse.builder()
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.SERVICE_UNAVAILABLE); // 503
+    }
 }
