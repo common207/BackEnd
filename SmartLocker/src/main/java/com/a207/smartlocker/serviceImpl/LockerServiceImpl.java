@@ -104,7 +104,7 @@ public class LockerServiceImpl implements LockerService {
         }
 
         // 3. 락커 큐에 추가
-        if (lockerRepository.findById(request.getLockerId()).isPresent()) {
+        if (lockerQueueRepository.findByLockerIdAndRequestType(locker, "Retrieve").isPresent()) {
             throw new TaskAlreadyInQueueException("이미 수령 요청이 완료된 작업입니다.");
         }
 
