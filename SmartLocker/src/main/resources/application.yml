@@ -31,7 +31,7 @@ spring:
 
 robot:
   server:
-    url: http://jetson/rasp
+    url: http://172.26.1.168/jetson/rasp
 
 springdoc:
   api-docs:
