@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,7 +26,6 @@ public class AdminServiceImpl implements AdminService {
     private final CertificationRepository certificationRepository;
     private final RobotRepository robotRepository;
     private final LockerUsageLogRepository lockerUsageLogRepository;
-    private final HttpSession httpSession;
 
     @Override
     public AdminLoginResponse login(AdminLoginRequest request) {
@@ -33,16 +33,9 @@ public class AdminServiceImpl implements AdminService {
                 .findByAdminIdAndAdminPassword(request.getAdminId(), request.getAdminPassword());
 
         if (certificationOpt.isPresent()) {
-            httpSession.setAttribute("adminId", request.getAdminId());
-            httpSession.setAttribute("loginTime", LocalDateTime.now());
-            httpSession.setAttribute("adminPassword", request.getAdminPassword());
-            return new AdminLoginResponse(true, "로그인 성공", httpSession.getId());
+            return new AdminLoginResponse(true, "로그인 성공", UUID.randomUUID().toString().replace("-", ""));
         }
         return new AdminLoginResponse(false, "아이디 또는 비밀번호가 일치하지 않습니다", null);
-    }
-
-    public void logout() {
-        httpSession.invalidate();
     }
 
     @Override
