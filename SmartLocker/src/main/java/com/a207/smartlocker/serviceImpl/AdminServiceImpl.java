@@ -35,9 +35,10 @@ public class AdminServiceImpl implements AdminService {
         if (certificationOpt.isPresent()) {
             httpSession.setAttribute("adminId", request.getAdminId());
             httpSession.setAttribute("loginTime", LocalDateTime.now());
-            return new AdminLoginResponse(true, "로그인 성공");
+            httpSession.setAttribute("adminPassword", request.getAdminPassword());
+            return new AdminLoginResponse(true, "로그인 성공", httpSession.getId());
         }
-        return new AdminLoginResponse(false, "아이디 또는 비밀번호가 일치하지 않습니다");
+        return new AdminLoginResponse(false, "아이디 또는 비밀번호가 일치하지 않습니다", null);
     }
 
     public void logout() {
