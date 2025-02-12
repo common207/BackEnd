@@ -23,6 +23,12 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/getSession")
+    public ResponseEntity<SessionResponse> getSessionId() {
+        SessionResponse sessionResponse = adminService.createSessionId();
+        return ResponseEntity.ok(sessionResponse);
+    }
+
     @GetMapping("/robots")
     public ResponseEntity<List<RobotResponse>> getRobots() {
         List<RobotResponse> robots = adminService.getAllRobots();
