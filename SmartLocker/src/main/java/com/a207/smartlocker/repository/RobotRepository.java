@@ -13,15 +13,15 @@ import java.util.Optional;
 
 public interface RobotRepository extends JpaRepository<Robot, Long> {
     @Query(value = "UPDATE robots r SET robot_status_id = :newStatusId " +
-            "WHERE r.robot_id IN (SELECT r2.robot_id FROM robots r2 WHERE r2.robot_status_id = :currentStatusId LIMIT 1) " +
-            "RETURNING *",
-            nativeQuery = true)
-    Optional<Robot> findAndUpdateRobotStatus(@Param("currentStatusId") Long currentStatusId,
-                                             @Param("newStatusId") Long newStatusId);
+            "WHERE r.robot_id IN (SELECT r2.robot_id FROM robots r2 WHERE r2.robot_status_id = :currentStatusId LIMIT 1" +
+            " FOR UPDATE NOWAIT) RETURNING *", nativeQuery = true)
+    Robot findAndUpdateRobotStatus(@Param("currentStatusId") Long currentStatusId,
+                                   @Param("newStatusId") Long newStatusId);
 
     @Modifying
-    @Query("UPDATE Robot r SET r.robotStatus.robotStatusId = :newStatusId WHERE r.robotId = :robotId")
-    void updateRobotStatus(@Param("robotId") Long robotId, @Param("newStatusId") Long newStatusId);
+    @Query("UPDATE Robot r SET r.robotStatus.robotStatusId = :newStatusId, "+
+            "r.completedTasks = r.completedTasks + 1 WHERE r.robotId = :robotId")
+    void updateRobotStatusAndCompletedTasks(@Param("robotId") Long robotId, @Param("newStatusId") Long newStatusId);
 
     @Query("SELECT r FROM Robot r ORDER BY r.robotId ASC")
     List<Robot> findAllByOrderByRobotIdAsc();

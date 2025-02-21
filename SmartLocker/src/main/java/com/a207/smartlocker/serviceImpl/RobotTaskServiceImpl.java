@@ -8,12 +8,13 @@ import com.a207.smartlocker.repository.*;
 import com.a207.smartlocker.service.RobotTaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Service
-@Transactional
+@Transactional(isolation = Isolation.SERIALIZABLE)
 @RequiredArgsConstructor
 public class RobotTaskServiceImpl implements RobotTaskService {
     private final LockerQueueRepository lockerQueueRepository;
@@ -31,8 +32,10 @@ public class RobotTaskServiceImpl implements RobotTaskService {
                 .orElseThrow(() -> new NotFoundException("대기 중인 작업이 없습니다."));
 
         // 2. 사용 가능한 로봇 선택 및 상태 변경
-        Robot robot = robotRepository.findAndUpdateRobotStatus(1L, 2L)
-                .orElseThrow(() -> new NoAvailableRobotException("사용 가능한 로봇이 없습니다."));
+        Robot robot = robotRepository.findAndUpdateRobotStatus(1L, 2L);
+        if (robot == null) {
+            throw new NoAvailableRobotException("사용 가능한 로봇이 없습니다.");
+        }
 
         // 3. 락커 조회
         Locker locker = lockerQueue.getLockerId();
@@ -54,8 +57,8 @@ public class RobotTaskServiceImpl implements RobotTaskService {
         // 6. 사용 로그 업데이트
         updateLockerUsageLog(locker, robot, lockerQueue.getRequestType());
 
-        // 7. 로봇 상태를 대기 중으로 변경
-        robotRepository.updateRobotStatus(robot.getRobotId(), 1L);
+        // 7. 로봇 상태를 대기 중으로 변경 및 작업 횟수 증가
+        robotRepository.updateRobotStatusAndCompletedTasks(robot.getRobotId(), 1L);
 
         // 8. 큐 작업 제거
         lockerQueueRepository.delete(lockerQueue);
@@ -64,6 +67,8 @@ public class RobotTaskServiceImpl implements RobotTaskService {
         return RobotTaskResponse.builder()
                 .success(true)
                 .message("로봇 작업 완료")
+                .lockerId(lockerQueue.getLockerId().getLockerId())
+                .requestType(lockerQueue.getRequestType())
                 .build();
     }
 
